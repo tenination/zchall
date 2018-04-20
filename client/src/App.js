@@ -39,10 +39,13 @@ class App extends Component {
       a = ascending && a || tempB;
       b = ascending && b || tempA;
 
-      if (a.title > b.title) {
+      const titleA = a.title.toUpperCase(); // ignore upper and lowercase
+      const titleB = b.title.toUpperCase(); // ignore upper and lowercase
+
+      if (titleA > titleB) {
         return 1;
       }
-      if (a.title < b.title) {
+      if (titleA < titleB) {
         return -1;
       }
     }
@@ -62,10 +65,13 @@ class App extends Component {
       a = ascending && a || tempB;
       b = ascending && b || tempA;
 
-      if (a.author > b.author) {
+      const authorA = a.author.toUpperCase(); // ignore upper and lowercase
+      const authorB = b.author.toUpperCase(); // ignore upper and lowercase
+
+      if (authorA > authorB) {
         return 1;
       }
-      if (a.author < b.author) {
+      if (authorA < authorB) {
         return -1;
       }
     }
@@ -85,10 +91,13 @@ class App extends Component {
       a = ascending && a || tempB;
       b = ascending && b || tempA;
 
-      if (a.publisher > b.publisher) {
+      const publisherA = a.publisher.toUpperCase(); // ignore upper and lowercase
+      const publisherB = b.publisher.toUpperCase(); // ignore upper and lowercase
+
+      if (publisherA > publisherB) {
         return 1;
       }
-      if (a.publisher < b.publisher) {
+      if (publisherA < publisherB) {
         return -1;
       }
     }
