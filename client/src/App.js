@@ -13,7 +13,8 @@ class App extends Component {
       searchResults: [],
       titleToggle : true,
       authorToggle: true,
-      publisherToggle: true
+      publisherToggle: true,
+      resultsFound: true
     };
     this.handleSearchQuery = this.handleSearchQuery.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -99,7 +100,13 @@ class App extends Component {
   handleSubmit() {
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchQuery}&key=AIzaSyDdFctjavaCH6UIfhKePaMjKbI1uH_XbzY`)
       .then((result) => {
-        console.log(result);
+        this.setState({
+          resultsFound: result.data.totalItems !== 0
+        });
+
+        if (!this.state.resultsFound) {
+          return;
+        }
         const searchResults = [];
         for (let i = 0; i < result.data.items.length; i++) { 
           let searchResult = {};
@@ -113,6 +120,9 @@ class App extends Component {
       })
       .catch((err) => {
         console.log('error detected', err);
+        this.setState({
+          resultsFound: false
+        });
         throw err;
       });
   }
@@ -133,7 +143,8 @@ class App extends Component {
        <button onClick={this.titleToggle}>Title</button>
        <button onClick={this.authorToggle}>Author</button>
        <button onClick={this.publisherToggle}>Publisher</button>
-       <SearchResults searchResults={this.state.searchResults}/>
+       {this.state.resultsFound && <SearchResults searchResults={this.state.searchResults}/>}
+       {!this.state.resultsFound && <div>No Results Found.</div>}
       </div>
     );
   }
