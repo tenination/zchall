@@ -14,7 +14,8 @@ class App extends Component {
       titleToggle : true,
       authorToggle: true,
       publisherToggle: true,
-      resultsFound: true
+      resultsFound: true,
+      initial: true
     };
     this.handleSearchQuery = this.handleSearchQuery.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -25,7 +26,7 @@ class App extends Component {
 
   handleSearchQuery(e) {
     e.preventDefault();
-    this.setState({ searchQuery: e.target.value })
+    this.setState({ searchQuery: e.target.value });
   }
 
   titleToggle() {
@@ -55,7 +56,7 @@ class App extends Component {
     this.setState({ searchResults });
   }
   authorToggle() {
-    this.setState({authorToggle: !this.state.authorToggle});
+    this.setState({ authorToggle: !this.state.authorToggle });
     let ascending = this.state.authorToggle;
     function compare(a,b) {
       
@@ -107,6 +108,7 @@ class App extends Component {
     this.setState({ searchResults });
   }
   handleSubmit() {
+    this.setState({ initial:false });
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchQuery}&key=AIzaSyDdFctjavaCH6UIfhKePaMjKbI1uH_XbzY`)
       .then((result) => {
         this.setState({
@@ -120,15 +122,14 @@ class App extends Component {
         for (let i = 0; i < result.data.items.length; i++) { 
           let searchResult = {};
           searchResult.title = result.data.items[i].volumeInfo.title;
-          searchResult.author = (result.data.items[i].volumeInfo.authors && result.data.items[i].volumeInfo.authors[0]) || 'Unavailable';
-          searchResult.publisher = result.data.items[i].volumeInfo.publisher || 'Unavailable';
+          searchResult.author = (result.data.items[i].volumeInfo.authors && result.data.items[i].volumeInfo.authors[0]) || 'N/A';
+          searchResult.publisher = result.data.items[i].volumeInfo.publisher || 'N/A';
           searchResults.push(searchResult);
         }
         
         this.setState({ searchResults });
       })
       .catch((err) => {
-        console.log('error detected', err);
         this.setState({
           resultsFound: false
         });
@@ -138,22 +139,19 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Book Search Using Google Books API</h1>
-
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-       <input type='text' onChange={this.handleSearchQuery} />
+       <h1 className="App-title">Book Search Using Google Books API</h1>
+       <input type='text' placeholder='Search for books' onChange={this.handleSearchQuery} />
        <input type='submit' onClick={this.handleSubmit}/>
        <br />
-       <button onClick={this.titleToggle}>Title</button>
-       <button onClick={this.authorToggle}>Author</button>
-       <button onClick={this.publisherToggle}>Publisher</button>
-       {this.state.resultsFound && <SearchResults searchResults={this.state.searchResults}/>}
+
+       <button onClick={this.titleToggle}>Sort by title</button>
+       <button onClick={this.authorToggle}>Sort by author</button>
+       <button onClick={this.publisherToggle}>Sort by publisher</button>
+       <br />
+       <br />
+
        {!this.state.resultsFound && <div>No Results Found.</div>}
+       {this.state.resultsFound && !this.state.initial && <SearchResults searchResults={this.state.searchResults}/>}
       </div>
     );
   }
