@@ -110,7 +110,10 @@ class App extends Component {
         }
         
         this.setState({ searchResults });
-        console.log('STATE IS:', this.state.searchResults);
+      })
+      .catch((err) => {
+        console.log('error detected', err);
+        throw err;
       });
   }
   render() {
