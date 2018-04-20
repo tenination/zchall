@@ -2,14 +2,91 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
+import SearchResults from './SearchResults';
+
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults: []
+      searchResults: [],
+      titleToggle : true,
+      authorToggle: true,
+      publisherToggle: true
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.titleToggle = this.titleToggle.bind(this);
+    this.authorToggle = this.authorToggle.bind(this);
+    this.publisherToggle = this.publisherToggle.bind(this);
+  }
+  titleToggle() {
+    this.setState({titleToggle: !this.state.titleToggle});
+    let ascending = this.state.titleToggle;
+    function compare(a,b) {
+      
+      let tempA = a;
+      let tempB = b;
+
+      a = ascending && a || tempB;
+      b = ascending && b || tempA;
+
+      if (a.title > b.title) {
+        return 1;
+      }
+      if (a.title < b.title) {
+        return -1;
+      }
+    }
+    
+    let searchResults = this.state.searchResults;
+    searchResults.sort(compare);
+    this.setState({ searchResults });
+  }
+  authorToggle() {
+    this.setState({authorToggle: !this.state.authorToggle});
+    let ascending = this.state.authorToggle;
+    function compare(a,b) {
+      
+      let tempA = a;
+      let tempB = b;
+
+      a = ascending && a || tempB;
+      b = ascending && b || tempA;
+
+      if (a.author > b.author) {
+        return 1;
+      }
+      if (a.author < b.author) {
+        return -1;
+      }
+    }
+    
+    let searchResults = this.state.searchResults;
+    searchResults.sort(compare);
+    this.setState({ searchResults });
+  }
+  publisherToggle() {
+    this.setState({publisherToggle: !this.state.publisherToggle});
+    let ascending = this.state.publisherToggle;
+    function compare(a,b) {
+      
+      let tempA = a;
+      let tempB = b;
+
+      a = ascending && a || tempB;
+      b = ascending && b || tempA;
+
+      if (a.publisher > b.publisher) {
+        return 1;
+      }
+      if (a.publisher < b.publisher) {
+        return -1;
+      }
+    }
+    
+    let searchResults = this.state.searchResults;
+    searchResults.sort(compare);
+    this.setState({ searchResults });
   }
   handleSubmit() {
     axios.get('https://www.googleapis.com/books/v1/volumes?q=witches+inauthor:dahl&key=AIzaSyDdFctjavaCH6UIfhKePaMjKbI1uH_XbzY')
@@ -21,11 +98,11 @@ class App extends Component {
           searchResult.title = result.data.items[i].volumeInfo.title;
           searchResult.author = (result.data.items[i].volumeInfo.authors && result.data.items[i].volumeInfo.authors[0]) || 'Unavailable';
           searchResult.publisher = result.data.items[i].volumeInfo.publisher || 'Unavailable';
-          console.log(searchResult);
           searchResults.push(searchResult);
         }
         
         this.setState({ searchResults });
+        console.log('STATE IS:', this.state.searchResults);
       });
   }
   render() {
@@ -33,7 +110,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Sup Dawg!</h1>
+          <h1 className="App-title">Book Search Using Google Books API</h1>
 
         </header>
         <p className="App-intro">
@@ -41,7 +118,11 @@ class App extends Component {
         </p>
        <input type='text' />
        <input type='submit' onClick={this.handleSubmit}/>
-
+       <br />
+       <button onClick={this.titleToggle}>Title</button>
+       <button onClick={this.authorToggle}>Author</button>
+       <button onClick={this.publisherToggle}>Publisher</button>
+       <SearchResults searchResults={this.state.searchResults}/>
       </div>
     );
   }
