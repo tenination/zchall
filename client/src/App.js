@@ -9,16 +9,24 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      searchQuery: '',
       searchResults: [],
       titleToggle : true,
       authorToggle: true,
       publisherToggle: true
     };
+    this.handleSearchQuery = this.handleSearchQuery.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.titleToggle = this.titleToggle.bind(this);
     this.authorToggle = this.authorToggle.bind(this);
     this.publisherToggle = this.publisherToggle.bind(this);
   }
+
+  handleSearchQuery(e) {
+    e.preventDefault();
+    this.setState({ searchQuery: e.target.value })
+  }
+
   titleToggle() {
     this.setState({titleToggle: !this.state.titleToggle});
     let ascending = this.state.titleToggle;
@@ -89,7 +97,7 @@ class App extends Component {
     this.setState({ searchResults });
   }
   handleSubmit() {
-    axios.get('https://www.googleapis.com/books/v1/volumes?q=witches+inauthor:dahl&key=AIzaSyDdFctjavaCH6UIfhKePaMjKbI1uH_XbzY')
+    axios.get(`https://www.googleapis.com/books/v1/volumes?q=${this.state.searchQuery}&key=AIzaSyDdFctjavaCH6UIfhKePaMjKbI1uH_XbzY`)
       .then((result) => {
         console.log(result);
         const searchResults = [];
@@ -116,7 +124,7 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-       <input type='text' />
+       <input type='text' onChange={this.handleSearchQuery} />
        <input type='submit' onClick={this.handleSubmit}/>
        <br />
        <button onClick={this.titleToggle}>Title</button>
